@@ -1,10 +1,22 @@
 # WiFi Speed Test
 
-A simple, self-hosted WiFi speed test — no internet connection required. Runs entirely on your local network and measures download speed, upload speed, ping, and jitter between your device and the server.
+
+
+
 
 ## Why
 
-Public speed test sites measure your connection to their servers over the internet. This tool measures speed over your **local WiFi network** — useful for testing WiFi performance on its own, without your ISP or internet routing being part of the result.
+
+Why?
+because they lie to us .
+the results you get is not correct 
+Trust me.
+i am using the same engine tho.
+
+Public speed test sites measure your connection to their servers over the internet. This app does the same thing, but in a simple local web interface. It uses [Cloudflare's official speed test engine](https://github.com/cloudflare/speedtest) (`@cloudflare/speedtest`), the same underlying code that powers [speed.cloudflare.com](https://speed.cloudflare.com). That means the results should be comparable to other major online speed tests.
+
+This is a real internet speed test, not a loopback-only test. The local Express server is only used to serve the page and frontend assets.
+
 
 ## Tech Stack
 
@@ -46,11 +58,13 @@ To test WiFi speed from a phone or another computer:
 
 ## How It Works
 
-- **Ping/Jitter:** Sends repeated lightweight requests to `/ping` and measures round-trip time and variance.
-- **Download:** Requests a large data blob from `/download` and times how long it takes to fully arrive.
-- **Upload:** Sends a data blob to `/upload` and times how long the server takes to receive it.
+The app loads `@cloudflare/speedtest` in the browser and runs its full measurement sequence against Cloudflare's edge network:
 
-Speeds are calculated in Mbps from the transferred byte size and elapsed time.
+- **Ping/Jitter:** Unloaded latency measurements against Cloudflare's edge.
+- **Download:** A ramping sequence of GET requests of increasing size, measuring throughput.
+- **Upload:** A ramping sequence of POST requests of increasing size, measuring throughput.
+
+Results update live in the UI as each stage completes. The local Express server included in this project just serves the static frontend files — it isn't used for the speed measurements themselves.
 
 ## Project Structure
 
@@ -73,3 +87,6 @@ wifi-speed-test/
 - Results are capped by your machine's own network interface speed, not just the WiFi link itself.
 - No data is stored — uploaded test data is discarded immediately by the server.
 
+## License
+
+MIT
