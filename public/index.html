@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WiFi Speed Test</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>WiFi Speed Test</h1>
+    <p class="subtitle">Local network speed test — no internet required</p>
+
+    <div class="results">
+      <div class="result-card">
+        <span class="label">Ping</span>
+        <span class="value" id="ping-value">--</span>
+        <span class="unit">ms</span>
+      </div>
+      <div class="result-card">
+        <span class="label">Jitter</span>
+        <span class="value" id="jitter-value">--</span>
+        <span class="unit">ms</span>
+      </div>
+      <div class="result-card">
+        <span class="label">Download</span>
+        <span class="value" id="download-value">--</span>
+        <span class="unit">Mbps</span>
+      </div>
+      <div class="result-card">
+        <span class="label">Upload</span>
+        <span class="value" id="upload-value">--</span>
+        <span class="unit">Mbps</span>
+      </div>
+    </div>
+
+    <div class="status" id="status">Ready</div>
+
+    <button id="start-btn">Start Test</button>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

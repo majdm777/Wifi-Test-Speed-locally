@@ -1,0 +1,13 @@
+{
+  "name": "wifi-speed-test",
+  "version": "1.0.0",
+  "description": "Local WiFi speed test web app",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node --watch server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
