@@ -1,91 +1,84 @@
 # WiFi Speed Test
 
+A small web interface for measuring a device's internet connection against
+Cloudflare. The Node.js server hosts the interface on your computer so that
+devices on the same local network can open it.
 
+## What It Measures
 
+The browser sends timed requests to Cloudflare's speed-test endpoints and
+reports:
 
+- **Ping** and **jitter** to Cloudflare
+- **Download** bandwidth from Cloudflare
+- **Upload** bandwidth to Cloudflare
 
-## Why
+This is an internet speed test, not a Wi-Fi-only or LAN-throughput test. The
+result includes the device's Wi-Fi connection, router, ISP connection, and the
+path to Cloudflare. It therefore may differ from tests run against other
+providers or endpoints.
 
+The local Express server serves the page. Although the repository also contains
+`/ping`, `/download`, and `/upload` routes, the current browser client does not
+use them for its measurements.
 
-Why?
-because they lie to us .
-the results you get is not correct 
-Trust me.
-i am using the same engine tho.
+Each download and upload stage has a maximum duration of **30 seconds**. The
+display updates while data is transferred; when a stage reaches its limit, its
+in-progress request is stopped and the latest throughput value is retained.
 
-Public speed test sites measure your connection to their servers over the internet. This app does the same thing, but in a simple local web interface. It uses [Cloudflare's official speed test engine](https://github.com/cloudflare/speedtest) (`@cloudflare/speedtest`), the same underlying code that powers [speed.cloudflare.com](https://speed.cloudflare.com). That means the results should be comparable to other major online speed tests.
+## Requirements
 
-This is a real internet speed test, not a loopback-only test. The local Express server is only used to serve the page and frontend assets.
+- [Node.js](https://nodejs.org/) (an LTS release is recommended)
+- Internet access, so the browser can load the Cloudflare speed-test module and
+  contact Cloudflare's network
 
-
-## Tech Stack
-
-- **Backend:** Node.js + Express
-- **Frontend:** Vanilla HTML/CSS/JavaScript (no framework, no build step)
-
-## Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org) (LTS version recommended)
-
-### Installation
+## Install and Run
 
 ```bash
-git clone <your-repo-url>
-cd wifi-speed-test
 npm install
-```
-
-### Run
-
-```bash
 npm start
 ```
 
-Then open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) and select **Start Internet
+Speed Test**.
 
-## Testing Other Devices on Your Network
+For development with automatic server restarts:
 
-To test WiFi speed from a phone or another computer:
+```bash
+npm run dev
+```
 
-1. Find your host machine's local IP address:
-   - **Mac/Linux:** `ifconfig | grep inet`
-   - **Windows:** `ipconfig`
-   - Look for something like `192.168.1.X`
-2. On the other device (connected to the same WiFi), open `http://192.168.1.X:3000`
-3. Click **Start Test**
+## Test Another Device on the Same Network
 
-## How It Works
+1. Start the server on the host computer.
+2. Find the host's private IP address (on Windows, run `ipconfig`; look for an
+   address such as `192.168.1.20`).
+3. On a phone or computer connected to the same LAN/Wi-Fi, open
+   `http://<host-ip>:3000`.
+4. Start the test in that device's browser.
 
-The app loads `@cloudflare/speedtest` in the browser and runs its full measurement sequence against Cloudflare's edge network:
-
-- **Ping/Jitter:** Unloaded latency measurements against Cloudflare's edge.
-- **Download:** A ramping sequence of GET requests of increasing size, measuring throughput.
-- **Upload:** A ramping sequence of POST requests of increasing size, measuring throughput.
-
-Results update live in the UI as each stage completes. The local Express server included in this project just serves the static frontend files — it isn't used for the speed measurements themselves.
+The displayed result is for the device running the browser, not necessarily the
+computer hosting the server. If the page cannot be reached, allow Node.js
+through the host firewall for private networks.
 
 ## Project Structure
 
-```
-wifi-speed-test/
-├── server/
-│   ├── server.js          # Express app entry point
-│   └── routes/
-│       └── speedtest.js   # /download, /upload, /ping endpoints
-├── public/
-│   ├── index.html         # Test page UI
-│   ├── style.css
-│   └── script.js          # Client-side test logic
-├── package.json
-└── README.md
+```text
+server/
+  server.js              Express server and static-file host
+  routes/speedtest.js    Local ping/download/upload endpoints (currently unused by the client)
+public/
+  index.html             Page markup
+  style.css              Page styling
+  script.js              Timed Cloudflare speed-test client logic
+package.json
 ```
 
 ## Notes
 
-- Results are capped by your machine's own network interface speed, not just the WiFi link itself.
-- No data is stored — uploaded test data is discarded immediately by the server.
+- The app does not persist test results.
+- A lost internet connection interrupts the test.
+- The browser must be able to reach Cloudflare's speed-test service.
 
 ## License
 
